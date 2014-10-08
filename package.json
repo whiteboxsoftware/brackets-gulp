@@ -1,0 +1,21 @@
+{
+  "name": "dalcib.brackets-gulp",
+  "title": "brackets-gulp",
+  "version": "0.1.0",
+  "description": "Adds Gulp.js support to Brackets.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dalcib/brackets-gulp.git"
+  },
+  "keywords": ["brackets","gulp"],
+  "author": "Dalci de Jesus Bagolin",
+  "licenses":"MIT",
+  "bugs": {"url": "https://github.com/dalcib/brackets-gulp/issues"},
+  "homepage": "https://github.com/dalcib/brackets-gulp",
+  "engines": {
+     "brackets": ">=0.43.0"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
+
