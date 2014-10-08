@@ -13,9 +13,9 @@ define(function (require, exports, module) {
     FileSystem = brackets.getModule('filesystem/FileSystem'),
     FileUtils = brackets.getModule('file/FileUtils'),
     Menus = brackets.getModule('command/Menus'),
-    AppInit = brackets.getModule('utils/AppInit'),
-    GulpMenu;
+    AppInit = brackets.getModule('utils/AppInit');
 
+  var GulpMenu, root, hasGulp, tasks;
 
   var gulpDomain = new NodeDomain('gulpDomain', ExtensionUtils.getModulePath(module, 'backend.js'));
 
@@ -28,13 +28,11 @@ define(function (require, exports, module) {
   });
   
   $(gulpDomain.connection).on('gulp.tasks', function (evt, data) {
-      var root = ProjectManager.getInitialProjectPath();
       console.log('evntTasks', '|'+data+'|');
-      var tasks = data.split(/\n/);
+      tasks = data.split(/\n/);
       GulpMenu.addMenuDivider();
       tasks.forEach(function(task) {
         if (task && task !== 'default') {
-          //console.log(task);
           CommandManager.register(task, 'brackets-gulp.'+task, function () {
             gulpDomain.exec('gulp', task, root, false);
           });
@@ -81,30 +79,43 @@ define(function (require, exports, module) {
     
                               
   function loadMenu(tasks) {
-    var root = ProjectManager.getInitialProjectPath();
+    root = ProjectManager.getInitialProjectPath();
     FileSystem.resolve(root+'gulpfile.js', function(exist) {
-      function bracketsOnsave() {
-        gulpDomain.exec('gulp','brackets-onsave', root, false);
-      }
       if (exist !== 'NotFound') {
-        $(DocumentManager).on('documentSaved', bracketsOnsave);
+        hasGulp = true;
+        $(DocumentManager).on('documentSaved', function() {
+          if (hasGulp) {
+            gulpDomain.exec('gulp','brackets-onsave', root, false);
+          }
+        });
         GulpMenu = Menus.addMenu('Gulp', 'gulp-menu');
-      
         CommandManager.register('default', 'brackets-gulp.gulp', function () {
             gulpDomain.exec('gulp', '', root, false);
         });
         GulpMenu.addMenuItem('brackets-gulp.gulp', 'Alt-G');
         gulpDomain.exec('gulp', '--tasks-simple', root, false);
-  
-          
+
       } else {
-        if (GulpMenu) { Menus.removeMenu('gulp-menu');}
-        $(DocumentManager).off('documentSaved', bracketsOnsave);
+        hasGulp = false;
+        if (GulpMenu) {
+          GulpMenu.removeMenuItem('brackets-gulp.gulp');
+          tasks.forEach(function(task) {
+            if (task && task !== 'default') {
+              GulpMenu.remveMenuItem('brackets-gulp.'+task);
+            }
+          });
+          Menus.removeMenu('gulp-menu');
+        }
       }
     });
 	} 
 	
 	AppInit.appReady(function () {
+
+      var $icon  = $('<a class="brackets-gulp-icon" style="background: url(./extension/dev/gulp.png);" href="#"> </a>')
+      .attr('title', 'Gulp')
+      .appendTo($('#main-toolbar .buttons'));
+
       loadMenu();
       $(ProjectManager).on('projectOpen', function() { 
         loadMenu();
