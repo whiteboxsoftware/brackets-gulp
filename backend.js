@@ -21,7 +21,7 @@
       });
 
       child.stdout.on('data', function (data) {
-        console.log('ok', data);
+        //console.log('ok', data);
         if (args === '--tasks-simple') {
           _domainManager.emitEvent('gulp', 'tasks', [data]);
         } else {
