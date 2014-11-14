@@ -18,6 +18,7 @@
 
       child = exec(cmd, {cwd: cwd}, function (error, stdout, stderr) {
         if (error) { console.log(error); }   
+        _domainManager.emitEvent('gulp', 'error', [error]);
       });
 
       child.stdout.on('data', function (data) {
@@ -31,7 +32,8 @@
 
       child.stderr.on('data', function (data) {
         console.log('err', data);
-        _domainManager.emitEvent('gulp', 'update', [data]);
+        //_domainManager.emitEvent('gulp', 'update', [data]);
+        _domainManager.emitEvent('gulp', 'error', [data]);
       });
       
     }
@@ -65,6 +67,12 @@
       _domainManager.registerEvent(
         'gulp',
         'tasks',
+        [{name: 'data', type: 'string'}]
+      );
+      
+      _domainManager.registerEvent(
+        'gulp',
+        'error',
         [{name: 'data', type: 'string'}]
       );
     }

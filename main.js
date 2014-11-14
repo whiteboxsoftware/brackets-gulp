@@ -28,6 +28,14 @@ define(function (require, exports, module) {
   $(gulpDomain.connection).on('gulp.update', function (evt, data) {
     //console.log('evntData', '|'+data+'|');
     formOutput.appendOutput(data);
+    if (data.match(/error/) || data.match(/Error/)) {
+      formOutput.panelOut.show();
+    }
+  });
+  
+  $(gulpDomain.connection).on('gulp.error', function (evt, data) {
+    console.log('error', '|'+data+'|');
+    formOutput.appendOutput(data);
     formOutput.panelOut.show();
   });
   
