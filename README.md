@@ -1,4 +1,4 @@
-![gulp](gulp.png) 
+![gulp](gulpx.png) 
 #brackets-gulp
 
 A extension for Brackets to integrate `Gulp.js` to the editor.
