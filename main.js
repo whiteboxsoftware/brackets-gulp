@@ -92,7 +92,7 @@ define(function (require, exports, module) {
 
 	function loadMenu(tasks) {
 		destroyMenu();
-		locateGulpRoot(ProjectManager.getProjectRoot(), function (gulpRoot) {
+		locateGulpRoot(ProjectManager.getProjectRoot().fullPath, function (gulpRoot) {
 			if (gulpRoot === null) {
 				hasGulp = false;
 				return;
@@ -119,16 +119,19 @@ define(function (require, exports, module) {
 	}
 
 	function locateGulpRoot(candidatePath, foundCallback) {
+		if (!candidatePath) {
+			console.log("Gulpfile not found.")
+			foundCallback(null);
+			return;
+		}
+		
+		console.log("Looking for gulpfile in '%s'", candidatePath);
 		FileSystem.resolve(candidatePath + 'gulpfile.js', function (exist) {
 			if (exist !== 'NotFound') {
 				foundCallback(candidatePath);
 			} else {
 				FileSystem.resolve(candidatePath + "..", function (err, entry) {
-					if (!err) {
-						locateGulpRoot(entry.path, foundCallback);
-					} else {
-						foundCallback(null);
-					}
+					locateGulpRoot(err ? null : entry.fullPath, foundCallback);
 				});
 			}
 		});
