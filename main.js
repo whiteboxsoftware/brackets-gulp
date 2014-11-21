@@ -19,9 +19,9 @@ define(function (require, exports, module) {
 		AppInit = brackets.getModule('utils/AppInit'),
 		icon = require.toUrl('gulp.png');
 
-
-
-	var gulpMenu, path, hasGulp, tasks, bracketsOnsave,
+	//bracketsOnSave: index in tasks array of brackets-onsave, task to run whenever a document is saved, or null if task not defined.
+	//bracketsDefault: index in the tasks array of brackets-default, task to run as default when gulp is run from within Brackets, or null if task not defined.
+	var gulpMenu, path, hasGulp, tasks, bracketsOnsave, bracketsDefault,
 		gulpDomain = new NodeDomain('gulpDomain', ExtensionUtils.getModulePath(module, 'backend.js'));
 
 	$(gulpDomain.connection).on('gulp.update', function (evt, data) {
@@ -44,8 +44,12 @@ define(function (require, exports, module) {
 		if (bracketsOnsave === -1) {
 			bracketsOnsave = null;
 		}
+		bracketsDefault = tasks.indexOf('brackets-default');
+		if (bracketsDefault === -1) {
+			bracketsDefault = null;
+		}
 		tasks.forEach(function (task) {
-			if (task && task !== 'default') {
+			if (task && task !== (bracketsDefault !== null ? 'brackets-default' : 'default')) {
 				if (!CommandManager.get('djb.brackets-gulp.' + task)) {
 					CommandManager.register(task, 'djb.brackets-gulp.' + task, function () {
 						gulpDomain.exec('gulp', task, path, false);
@@ -107,9 +111,15 @@ define(function (require, exports, module) {
 			gulpMenu = Menus.addMenu('Gulp', 'djb.gulp-menu');
 			if (!Menus.getMenuItem('djb.brackets-gulp.gulp')) {
 				if (!CommandManager.get('djb.brackets-gulp.gulp')) {
-					CommandManager.register('default', 'djb.brackets-gulp.gulp', function () {
-						gulpDomain.exec('gulp', '', gulpRoot, false);
-					});
+					var defaultTitle, defaultTask;
+					if (bracketsDefault !== null)
+						defaultTitle = 'Default (brackets-default)', defaultTask = 'brackets-default';
+					else {
+						defaultTitle = 'Default', defaultTask = '';
+						CommandManager.register(defaultTitle, 'djb.brackets-gulp.gulp', function () {
+							gulpDomain.exec('gulp', defaultTask, gulpRoot, false);
+						});
+					}
 				}
 				gulpMenu.addMenuItem('djb.brackets-gulp.gulp', 'Alt-G');
 				gulpMenu.addMenuDivider();
