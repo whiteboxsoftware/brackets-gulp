@@ -92,7 +92,7 @@ define(function (require, exports, module) {
 
 	function loadMenu(tasks) {
 		destroyMenu();
-		locateGulpRoot(ProjectManager.getProjectRoot(), function (gulpRoot) {
+		locateGulpRoot(ProjectManager.getProjectRoot().fullPath, function (gulpRoot) {
 			if (gulpRoot === null) {
 				hasGulp = false;
 				return;
@@ -119,19 +119,30 @@ define(function (require, exports, module) {
 	}
 
 	function locateGulpRoot(candidatePath, foundCallback) {
-		FileSystem.resolve(candidatePath + 'gulpfile.js', function (exist) {
-			if (exist !== 'NotFound') {
-				foundCallback(candidatePath);
-			} else {
-				FileSystem.resolve(candidatePath + "..", function (err, entry) {
-					if (!err) {
-						locateGulpRoot(entry.path, foundCallback);
-					} else {
-						foundCallback(null);
-					}
+
+		var gulpfileNotFound = function () {
+				console.log("Gulpfile not found.")
+				foundCallback(null, null);
+				return undefined;
+			},
+			locate = function (candidatePath) {
+				if (!candidatePath)
+					return gulpfileNotFound(foundCallback);
+
+				console.log("Looking for gulpfile in '%s'", candidatePath);
+				FileSystem.resolve(candidatePath + 'gulpfile.js', function (exist) {
+					if (exist !== 'NotFound')
+						return foundCallback(null, candidatePath);
+					if (candidatePath.split('/').length - 1 == 1)
+						return gulpfileNotFound(foundCallback);
+
+					FileSystem.resolve(candidatePath + "..", function (err, entry) {
+						locate(err ? null : entry.fullPath);
+					});
 				});
-			}
-		});
+			};
+
+		locate(candidatePath);
 	}
 
 
