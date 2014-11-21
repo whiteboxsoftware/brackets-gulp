@@ -1,17 +1,17 @@
 {
-  "name": "dalcib.brackets-gulp",
-  "title": "Brackets-gulp",
+  "name": "whitebox.brackets-gulp",
+  "title": "Brackets-Gulp",
   "version": "0.1.1",
   "description": "Adds Gulp.js support to Brackets.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/dalcib/brackets-gulp.git"
+    "url": "https://github.com/whiteboxsoftware/brackets-gulp"
   },
   "keywords": ["brackets","gulp"],
-  "author": "Dalci de Jesus Bagolin",
+  "author": "Dalci de Jesus Bagolin, Kris Dages",
   "licenses":"MIT",
-  "bugs": {"url": "https://github.com/dalcib/brackets-gulp/issues"},
-  "homepage": "https://github.com/dalcib/brackets-gulp",
+  "bugs": {"url": "https://github.com/whiteboxsoftware/brackets-gulp/issues"},
+  "homepage": "https://github.com/whiteboxsoftware/brackets-gulp",
   "engines": {
      "brackets": ">=1.0.0"
   },
