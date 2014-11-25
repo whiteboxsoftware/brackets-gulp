@@ -5,7 +5,7 @@
   "description": "Adds Gulp.js support to Brackets.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/whiteboxsoftware/brackets-gulp"
+    "url": "https://github.com/whiteboxsoftware/brackets-gulp#wb/master"
   },
   "keywords": ["brackets","gulp"],
   "author": "Dalci de Jesus Bagolin, Kris Dages",
