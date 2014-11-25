@@ -1,7 +1,7 @@
 {
   "name": "whitebox.brackets-gulp",
   "title": "Brackets-Gulp",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Adds Gulp.js support to Brackets.",
   "repository": {
     "type": "git",

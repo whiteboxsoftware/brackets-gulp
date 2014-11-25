@@ -21,7 +21,7 @@ define(function (require, exports, module) {
 
 	//bracketsOnSave: index in tasks array of brackets-onsave, task to run whenever a document is saved, or null if task not defined.
 	//bracketsDefault: index in the tasks array of brackets-default, task to run as default when gulp is run from within Brackets, or null if task not defined.
-	var gulpMenu, path, hasGulp, tasks, bracketsOnsave, bracketsDefault,
+	var gulpMenu, gulpRoot, hasGulp, tasks, bracketsOnsave, bracketsDefault,
 		gulpDomain = new NodeDomain('gulpDomain', ExtensionUtils.getModulePath(module, 'backend.js'));
 
 	$(gulpDomain.connection).on('gulp.update', function (evt, data) {
@@ -52,7 +52,7 @@ define(function (require, exports, module) {
 			if (task && task !== (bracketsDefault !== null ? 'brackets-default' : 'default')) {
 				if (!CommandManager.get('djb.brackets-gulp.' + task)) {
 					CommandManager.register(task, 'djb.brackets-gulp.' + task, function () {
-						gulpDomain.exec('gulp', task, path, false);
+						gulpDomain.exec('gulp', task, gulpRoot, false);
 					});
 				}
 				gulpMenu.addMenuItem('djb.brackets-gulp.' + task);
@@ -96,13 +96,15 @@ define(function (require, exports, module) {
 
 	function loadMenu(tasks) {
 		destroyMenu();
-		locateGulpRoot(ProjectManager.getProjectRoot().fullPath, function (err, gulpRoot) {
-			if (err || gulpRoot === null) {
+		locateGulpRoot(ProjectManager.getProjectRoot().fullPath, function (err, foundGulpRoot) {
+			if (err || foundGulpRoot === null) {
 				hasGulp = false;
+				gulpRoot = null;
 				return;
 			}
 
 			hasGulp = true;
+			gulpRoot = foundGulpRoot;
 			$(DocumentManager).on('documentSaved', function () {
 				if (hasGulp && bracketsOnsave) {
 					gulpDomain.exec('gulp', 'brackets-onsave', gulpRoot, false);
