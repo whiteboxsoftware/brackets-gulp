@@ -96,8 +96,8 @@ define(function (require, exports, module) {
 
 	function loadMenu(tasks) {
 		destroyMenu();
-		locateGulpRoot(ProjectManager.getProjectRoot().fullPath, function (gulpRoot) {
-			if (gulpRoot === null) {
+		locateGulpRoot(ProjectManager.getProjectRoot().fullPath, function (err, gulpRoot) {
+			if (err || gulpRoot === null) {
 				hasGulp = false;
 				return;
 			}
@@ -108,6 +108,7 @@ define(function (require, exports, module) {
 					gulpDomain.exec('gulp', 'brackets-onsave', gulpRoot, false);
 				}
 			});
+			destroyMenu();
 			gulpMenu = Menus.addMenu('Gulp', 'djb.gulp-menu');
 			if (!Menus.getMenuItem('djb.brackets-gulp.gulp')) {
 				if (!CommandManager.get('djb.brackets-gulp.gulp')) {
