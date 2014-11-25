@@ -112,14 +112,15 @@ define(function (require, exports, module) {
 			if (!Menus.getMenuItem('djb.brackets-gulp.gulp')) {
 				if (!CommandManager.get('djb.brackets-gulp.gulp')) {
 					var defaultTitle, defaultTask;
-					if (bracketsDefault !== null)
-						defaultTitle = 'Default (brackets-default)', defaultTask = 'brackets-default';
-					else {
-						defaultTitle = 'Default', defaultTask = '';
-						CommandManager.register(defaultTitle, 'djb.brackets-gulp.gulp', function () {
+					if (bracketsDefault !== null){
+						defaultTitle = 'Default (brackets-default)'; defaultTask = 'brackets-default';
+					} else {
+						defaultTitle = 'Default'; defaultTask = '';
+					}
+					CommandManager.register(defaultTitle, 'djb.brackets-gulp.gulp', function () {
 							gulpDomain.exec('gulp', defaultTask, gulpRoot, false);
 						});
-					}
+
 				}
 				gulpMenu.addMenuItem('djb.brackets-gulp.gulp', 'Alt-G');
 				gulpMenu.addMenuDivider();
@@ -131,7 +132,7 @@ define(function (require, exports, module) {
 	function locateGulpRoot(candidatePath, foundCallback) {
 
 		var gulpfileNotFound = function () {
-				console.log("Gulpfile not found.")
+				console.log("Gulpfile not found.");
 				foundCallback(null, null);
 				return undefined;
 			},
@@ -143,7 +144,7 @@ define(function (require, exports, module) {
 				FileSystem.resolve(candidatePath + 'gulpfile.js', function (exist) {
 					if (exist !== 'NotFound')
 						return foundCallback(null, candidatePath);
-					if (candidatePath.split('/').length - 1 == 1)
+					if (candidatePath.split('/').length - 1 === 1)
 						return gulpfileNotFound(foundCallback);
 
 					FileSystem.resolve(candidatePath + "..", function (err, entry) {
